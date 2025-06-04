@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AnanyaBot</title>
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364); /* 🚀 Futuristic gradient */
+    background-attachment: fixed;
+
+    height: 100vh;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    color: #e6f0ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+   
+  .message {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  max-width: 85%;
+  margin: 0.4rem 0;
+}
+
+.user {
+  background: #0056b3;
+  color: #fff;
+  margin-left: auto;
+  text-align: right;
+}
+
+.bot {
+  background: #2a2a3f;
+  color: #cfe9ff;
+  margin-right: auto;
+  text-align: left;
+}
+
+  @keyframes float-glow {
+  0% {
+    transform: translateY(0px);
+    box-shadow: 0 0 10px rgba(0, 255, 247, 0.1);
+  }
+  50% {
+    transform: translateY(-8px);
+    box-shadow: 0 0 30px rgba(0, 255, 247, 0.25);
+  }
+  100% {
+    transform: translateY(0px);
+    box-shadow: 0 0 10px rgba(0, 255, 247, 0.1);
+  }
+}
+.chat-container {
+  animation: float-glow 4s ease-in-out infinite;
+  background: rgba(22, 22, 43, 0.9);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 480px;
+  width: 100%;
+}
+
+  .chat-container {
+    background: #16162b;
+    border-radius: 16px;
+    box-shadow: 0 0 30px rgba(0, 255, 247, 0.05);
+    width: 100%;
+    max-width: 480px;
+    padding: 2rem;
+  }
+
+  h1 {
+    color: #00fff7;
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  h1::before {
+    content: "🤖";
+    margin-right: 0.5rem;
+  }
+
+  #messages {
+    min-height: 250px;
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    padding-right: 0.5rem;
+  }
+
+  .message {
+    margin: 0.6rem 0;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    max-width: 90%;
+    line-height: 1.5;
+    word-wrap: break-word;
+  }
+
+  .user {
+    background: #003366;
+    color: #e6f0ff;
+    align-self: flex-end;
+    margin-left: auto;
+  }
+
+  .bot {
+    background: #2b2b4b;
+    color: #d3e3fd;
+    align-self: flex-start;
+    margin-right: auto;
+  }
+
+  form {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    padding: 0.75rem;
+    font-size: 1rem;
+    background: #1e1e2e;
+    color: #e6f0ff;
+    border: 1px solid #444;
+    border-radius: 8px;
+  }
+
+  input[type="text"]::placeholder {
+    color: #888;
+  }
+
+  button {
+    padding: 0.75rem 1.2rem;
+    background: #00fff7;
+    border: none;
+    border-radius: 8px;
+    color: #0f0f1a;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background: #00e0e0;
+  }
+  .chat-title {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #00fff7;
+  margin: 0 0 1.5rem 0;
+  animation: fadeIn 2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+ 
+
+</style>
+
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <h1 class="chat-title">AnanyaBot</h1>
+    <div id="messages"></div>
+    <form id="chat-form">
+      <input type="text" id="user_input" placeholder="Ask me anything..." autocomplete="off" required />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script>
+  const form = document.getElementById("chat-form");
+  const input = document.getElementById("user_input");
+  const messages = document.getElementById("messages");
+
+  // Function to add message to chat window
+  function addMessage(text, sender) {
+    const msg = document.createElement("div");
+    msg.classList.add("message", sender);
+    msg.innerText = text;
+    messages.appendChild(msg);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  // On form submission
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const userText = input.value.trim();
+    if (!userText) return;
+
+    addMessage(userText, "user");
+    input.value = "";
+
+    // Show "Thinking..." temporarily
+    addMessage("💬 Thinking...", "bot");
+
+    try {
+      const res = await fetch("/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message: userText })
+      });
+
+      const data = await res.json();
+
+      // Replace last bot message with actual response
+      messages.lastChild.innerText = data.content || "⚠️ No response received.";
+    } catch (err) {
+      messages.lastChild.innerText = "❌ Error: Could not reach the server.";
+    }
+  });
+</script>
+</body>
+</html>
