@@ -1,4 +1,4 @@
-# 🤖 AnanyaBot
+# Gemini powered AnanyaBot
 
 **AnanyaBot** is a personalized AI chatbot powered by Google Gemini Pro and built using Flask. Designed with a sleek UI and smooth animations, AnanyaBot offers intelligent and friendly conversations with a futuristic touch.
 
